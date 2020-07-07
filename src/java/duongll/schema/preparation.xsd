@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<xsd:schema version="1.0"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified">
+    <xsd:element name="cakepreparations" type="CakePreparations" />
+    <xsd:complexType name="CakePreparations">
+        <xsd:sequence>
+            <xsd:element name="cakepreparation" type="CakePreparation" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CakePreparation">
+        <xsd:sequence>
+            <xsd:element name="id" type="xsd:integer"/>
+            <xsd:element name="contentprepare" type="xsd:string"/>
+            <xsd:element name="orderprepare" type="xsd:integer"/>
+            <xsd:element name="cakeid" type="xsd:integer"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>
