@@ -33,8 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Material.findAll", query = "SELECT m FROM Material m")
     , @NamedQuery(name = "Material.findById", query = "SELECT m FROM Material m WHERE m.id = :id")
     , @NamedQuery(name = "Material.findByName", query = "SELECT m FROM Material m WHERE m.name = :name")
-    , @NamedQuery(name = "Material.findByUnit", query = "SELECT m FROM Material m WHERE m.unit = :unit")
-    , @NamedQuery(name = "Material.findByQuantity", query = "SELECT m FROM Material m WHERE m.quantity = :quantity")})
+    , @NamedQuery(name = "Material.findByUnit", query = "SELECT m FROM Material m WHERE m.unit = :unit")})
 public class Material implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -49,9 +48,6 @@ public class Material implements Serializable {
     @Size(max = 50)
     @Column(name = "unit")
     private String unit;
-    @Size(max = 50)
-    @Column(name = "quantity")
-    private String quantity;
     @JoinColumn(name = "ingredientid", referencedColumnName = "id")
     @ManyToOne
     private Ingredient ingredientid;
@@ -88,15 +84,6 @@ public class Material implements Serializable {
 
     public void setUnit(String unit) {
         this.unit = unit;
-    }
-
-    @XmlElement
-    public String getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(String quantity) {
-        this.quantity = quantity;
     }
 
     @XmlElement

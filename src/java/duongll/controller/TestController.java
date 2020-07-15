@@ -5,10 +5,16 @@
  */
 package duongll.controller;
 
-import duongll.crawler.CrawlHelper;
+import duongll.client.AccountClient;
+import duongll.client.CakeClient;
+import duongll.client.FavoriteClient;
+import duongll.dto.Account;
+import duongll.dto.Cake;
+import duongll.dto.Favorite;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author duong
  */
+@WebServlet(name = "TestController", urlPatterns = {"/TestController"})
 public class TestController extends HttpServlet {
 
     /**
@@ -31,21 +38,34 @@ public class TestController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            System.out.println("Working directory: " + System.getProperty("user.dir"));
-            System.out.println("Đây là Test Controller");
-            String action = request.getParameter("action");
-            System.out.println("Action = " + action);
-            if (action.equals("category")) {
-                CrawlHelper.crawlDataBakingAMoment();
-                CrawlHelper.crawlDataBakingMad();
+        CakeClient cakeClient = new CakeClient();
+        FavoriteClient favoriteClient = new FavoriteClient();
+        try {
+            String username = "leduong";
+            String password = "leduong";
+            AccountClient accountClient = new AccountClient();
+            Account result = accountClient.checkLogin_XML(Account.class, username, password);
+            if (result != null) {
+                System.out.println("result: " + result.getRole());
+            }
+            Cake cake = cakeClient.findByCakeId_XML(Cake.class, "121");
+            Favorite favorite = new Favorite();
+            favorite.setId(new Long(0));
+            favorite.setCakeid(cake);
+            favorite.setAccount(result);
+            favorite.setAvailable(true);
+            Favorite f = favoriteClient.addToFavorite_XML(favorite, Favorite.class);
+            if (f == null) {
+                System.out.println("null");
+            } else {
+                System.out.println("Not null");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *

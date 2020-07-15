@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -98,5 +99,14 @@ public class IngredientFacadeREST extends AbstractFacade<Ingredient> {
             System.out.println("Something went wrong");
         }
         return entity;
+    }
+    
+    @GET
+    @Path("find/{id}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<Ingredient> findIngredientByCakeId(@PathParam("id") String cakeId){
+        Query query = em.createQuery("SELECT i FROM Ingredient i Where i.cakeid.id = :id")
+                .setParameter("id", Long.parseLong(cakeId));
+        return query.getResultList();
     }
 }

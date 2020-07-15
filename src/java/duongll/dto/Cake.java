@@ -19,7 +19,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "Cake")
-@XmlRootElement(name = "cake")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Cake.findAll", query = "SELECT c FROM Cake c")
     , @NamedQuery(name = "Cake.findById", query = "SELECT c FROM Cake c WHERE c.id = :id")
@@ -40,7 +39,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Cake.findByImage", query = "SELECT c FROM Cake c WHERE c.image = :image")
     , @NamedQuery(name = "Cake.findByLink", query = "SELECT c FROM Cake c WHERE c.link = :link")
     , @NamedQuery(name = "Cake.findByTime", query = "SELECT c FROM Cake c WHERE c.time = :time")
-    , @NamedQuery(name = "Cake.findByServes", query = "SELECT c FROM Cake c WHERE c.serves = :serves")})
+    , @NamedQuery(name = "Cake.findByServes", query = "SELECT c FROM Cake c WHERE c.serves = :serves")
+    , @NamedQuery(name = "Cake.findByCategoryID", query = "SELECT c FROM Cake c WHERE c.categoryid.id = :id")
+})
 public class Cake implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -66,6 +67,8 @@ public class Cake implements Serializable {
     private String time;
     @Column(name = "serves")
     private Integer serves;
+    @Column(name = "views")
+    private Long views;
     @OneToMany(mappedBy = "cakeid")
     private Collection<CakePreparation> cakePreparationCollection;
     @OneToMany(mappedBy = "cakeid")
@@ -73,6 +76,8 @@ public class Cake implements Serializable {
     @JoinColumn(name = "categoryid", referencedColumnName = "id")
     @ManyToOne
     private Category categoryid;
+    @OneToMany(mappedBy = "cakeid")
+    private Collection<Favorite> favoriteColelction;
 
     public Cake() {
     }
@@ -144,6 +149,15 @@ public class Cake implements Serializable {
         this.serves = serves;
     }
 
+    @XmlElement
+    public Long getViews() {
+        return views;
+    }
+
+    public void setViews(Long views) {
+        this.views = views;
+    }
+
     @XmlTransient
     public Collection<CakePreparation> getCakePreparationCollection() {
         return cakePreparationCollection;
@@ -169,6 +183,15 @@ public class Cake implements Serializable {
 
     public void setCategoryid(Category categoryid) {
         this.categoryid = categoryid;
+    }
+
+    @XmlTransient
+    public Collection<Favorite> getFavoriteColelction() {
+        return favoriteColelction;
+    }
+
+    public void setFavoriteColelction(Collection<Favorite> favoriteColelction) {
+        this.favoriteColelction = favoriteColelction;
     }
 
     @Override

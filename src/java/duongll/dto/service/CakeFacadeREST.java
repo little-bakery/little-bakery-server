@@ -10,6 +10,8 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -18,6 +20,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -45,20 +48,20 @@ public class CakeFacadeREST extends AbstractFacade<Cake> {
     @PUT
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("id") Long id, Cake entity) {
+    public void edit(@PathParam("id") String id, Cake entity) {
         super.edit(entity);
     }
 
     @DELETE
     @Path("{id}")
-    public void remove(@PathParam("id") Long id) {
+    public void remove(@PathParam("id") String id) {
         super.remove(super.find(id));
     }
 
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Cake find(@PathParam("id") Long id) {
+    public Cake find(@PathParam("id") String id) {
         return super.find(id);
     }
 
@@ -66,7 +69,13 @@ public class CakeFacadeREST extends AbstractFacade<Cake> {
     @Override
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Cake> findAll() {
-        return super.findAll();
+        try {
+            return super.findAll();
+        } catch (Exception e) {
+            System.out.println("Log at Cake Facade: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @GET
@@ -87,7 +96,7 @@ public class CakeFacadeREST extends AbstractFacade<Cake> {
     protected EntityManager getEntityManager() {
         return em;
     }
- 
+
     @POST
     @Path("cake")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -98,5 +107,23 @@ public class CakeFacadeREST extends AbstractFacade<Cake> {
             System.out.println("Something went wrong");
         }
         return entity;
+    }
+
+    @GET
+    @Path("/find/{id}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<Cake> findByCategoryId(@PathParam("id") String categoryId) {
+        Query query = em.createQuery("SELECT c FROM Cake c WHERE c.categoryid.id = :id")
+                .setParameter("id", Long.parseLong(categoryId));
+        return query.getResultList();
+    }
+    
+    @GET
+    @Path("{id}/find")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public Cake findByCakeId(@PathParam("id") String cakeId) {
+        Query query = em.createQuery("SELECT c FROM Cake c Where c.id = :id")
+                .setParameter("id", Long.parseLong(cakeId));
+        return (Cake) query.getSingleResult();
     }
 }

@@ -23,6 +23,11 @@ import duongll.utils.ConverterUtils;
 import duongll.utils.MyUtils;
 import duongll.utils.XMLUtils;
 import duongll.xslt.XSLTApplier;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import javax.xml.xpath.XPath;
 import org.w3c.dom.Document;
 
@@ -48,7 +53,6 @@ public class BakingAMomentCrawler {
             String cakesSource = XMLUtils.getHTMLSourceFromUrl(url);
             document = XMLUtils.parseHTMLSourceToXMLDOM(cakesSource);
             String cakeLink = xPath.evaluate("//div[@class='archive-post'][23]/a/@href", document);
-            String imgSrc = xPath.evaluate("//div[@class='archive-post'][23]/a/img/@src", document);
             CategoryClient categoryClient = new CategoryClient();
             Category category = categoryClient.findByName(Category.class, "Cake");
             CakeClient cakeClient = new CakeClient();
@@ -58,72 +62,73 @@ public class BakingAMomentCrawler {
 
             String cakeLinkSource = XMLUtils.getHTMLSourceFromUrl(cakeLink);
             String timesXML = XSLTA.applyStylesheet(
-                    MyUtils.getXSLTFile("F:\\Semester 8\\PRX\\SE1303\\LittleBakery_Server\\src\\java\\duongll\\xslt\\time-baking-a-moment.xsl"),
+                    MyUtils.getXSLTFile("F:\\Semester 8\\PRX\\SE1303\\Little_Bakery_Server\\src\\java\\duongll\\xslt\\time-baking-a-moment.xsl"),
                     cakeLinkSource);
             Times times = XMLUtils.unmarshal(timesXML, "", Times.class);
 
             String cakeXML = XSLTA.applyStylesheet(
-                    MyUtils.getXSLTFile("F:\\Semester 8\\PRX\\SE1303\\LittleBakery_Server\\src\\java\\duongll\\xslt\\cake-baking-a-moment.xsl"),
+                    MyUtils.getXSLTFile("F:\\Semester 8\\PRX\\SE1303\\Little_Bakery_Server\\src\\java\\duongll\\xslt\\cake-baking-a-moment.xsl"),
                     cakeLinkSource);
-            Cake cake = XMLUtils.unmarshal(cakeXML,
-                    "F:\\Semester 8\\PRX\\SE1303\\LittleBakery_Server\\src\\java\\duongll\\schema\\cake.xsd", Cake.class);
-            cake.setTime(ConverterUtils.convertTime(times.getPrepare(), times.getCook()));
-            cake.setImage(imgSrc);
-            cake.setCategoryid(category);
-            Cake c = cakeClient.createCake_XML(cake, Cake.class);
-            System.out.println("Cake ID: " + c.getId());
-            System.out.println("Cake Name: " + c.getName());
-            System.out.println("Cake Description: " + c.getDescription());
-            System.out.println("Cake Image: " + c.getImage());
-            System.out.println("Cake Link: " + c.getLink());
-            System.out.println("Cake Time: " + c.getTime());
-            System.out.println("Cake Serves: " + c.getServes());
-            System.out.println("Cake Category ID : " + c.getCategoryid().getId());
-            System.out.println("Cake Category Name : " + c.getCategoryid().getName());
+            ByteArrayOutputStream cakeStreamForDTD = XSLTA.applyStylesheetWithDtd("F:\\Semester 8\\PRX\\SE1303\\Little_Bakery_Server\\src\\java\\duongll\\dtd\\cake.dtd",
+                    "F:\\Semester 8\\PRX\\SE1303\\Little_Bakery_Server\\src\\java\\duongll\\xslt\\cake-baking-a-moment.xsl",
+                    cakeXML);
+            if (XMLUtils.validateXMLUsingDtd(new ByteArrayInputStream(cakeStreamForDTD.toByteArray(), 0, cakeStreamForDTD.size()))) {
+                Cake cake = XMLUtils.unmarshal(cakeXML,
+                        "F:\\Semester 8\\PRX\\SE1303\\Little_Bakery_Server\\src\\java\\duongll\\schema\\cake.xsd", Cake.class);
+                cake.setTime(ConverterUtils.convertTime(times.getPrepare(), times.getCook()));
+                cake.setViews(ConverterUtils.randomViews());
+                cake.setCategoryid(category);
+                cake.setImage("https://bakingamoment.com/wp-content/uploads/2019/01/IMG_2714-best-german-chocolate-cake-recipe-720x720.jpg");
+                cake.setServes(new Integer(10));
 
-            String ingredientXML = XSLTA.applyStylesheet(
-                    MyUtils.getXSLTFile("F:\\Semester 8\\PRX\\SE1303\\LittleBakery_Server\\src\\java\\duongll\\xslt\\ingredient-baking-a-moment.xsl"),
-                    cakeLinkSource);
-            Ingredients ingredientList = XMLUtils.unmarshal(ingredientXML,
-                    "F:\\Semester 8\\PRX\\SE1303\\LittleBakery_Server\\src\\java\\duongll\\schema\\ingredient.xsd",
-                    Ingredients.class);
-            for (Ingredient ingredient : ingredientList.getIngredients()) {
-                ingredient.setCakeid(c);
-                Ingredient tmp = ingredientClient.createIngredient_XML(ingredient, Ingredient.class);
-                ingredient.setId(tmp.getId());
-            }
+                Cake c = cakeClient.createCake_XML(cake, Cake.class);
 
-            String preparationXML = XSLTA.applyStylesheet(
-                    MyUtils.getXSLTFile("F:\\Semester 8\\PRX\\SE1303\\LittleBakery_Server\\src\\java\\duongll\\xslt\\preparation-baking-a-moment.xsl"),
-                    cakeLinkSource);
-            CakePreparations preparationList = XMLUtils.unmarshal(preparationXML,
-                    "F:\\Semester 8\\PRX\\SE1303\\LittleBakery_Server\\src\\java\\duongll\\schema\\preparation.xsd",
-                    CakePreparations.class);
-            for (CakePreparation cakepreparation : preparationList.getCakepreparations()) {
-                cakepreparation.setCakeid(c);
-                cakePreparationClient.createCakePreparation_XML(cakepreparation, CakePreparation.class);
-            }
+                String ingredientXML = XSLTA.applyStylesheet(
+                        MyUtils.getXSLTFile("F:\\Semester 8\\PRX\\SE1303\\Little_Bakery_Server\\src\\java\\duongll\\xslt\\ingredient-baking-a-moment.xsl"),
+                        cakeLinkSource);
+                Ingredients ingredientList = XMLUtils.unmarshal(ingredientXML,
+                        "F:\\Semester 8\\PRX\\SE1303\\Little_Bakery_Server\\src\\java\\duongll\\schema\\ingredient.xsd",
+                        Ingredients.class);
+                for (Ingredient ingredient : ingredientList.getIngredients()) {
+                    ingredient.setCakeid(c);
+                    Ingredient tmp = ingredientClient.createIngredient_XML(ingredient, Ingredient.class);
+                    ingredient.setId(tmp.getId());
+                }
 
-            String materialXML = XSLTA.applyStylesheet(
-                    MyUtils.getXSLTFile("F:\\Semester 8\\PRX\\SE1303\\LittleBakery_Server\\src\\java\\duongll\\xslt\\material-baking-a-moment.xsl"),
-                    cakeLinkSource);
-            Materials materialList = XMLUtils.unmarshal(materialXML,
-                    "F:\\Semester 8\\PRX\\SE1303\\LittleBakery_Server\\src\\java\\duongll\\schema\\material.xsd",
-                    Materials.class);
-            for (Material material : materialList.getMaterials()) {
-                material.setUnit(ConverterUtils.convertQuantity(material.getUnit()));
-                if (material.getIngredientid().getName().equals("For the Food")) {
-                    for (Ingredient ingredient : ingredientList.getIngredients()) {
-                        material.setIngredientid(ingredient);
-                    }
-                } else {
-                    for (Ingredient ingredient : ingredientList.getIngredients()) {
-                        if (material.getIngredientid().getName().equals(ingredient.getName())) {
+                String preparationXML = XSLTA.applyStylesheet(
+                        MyUtils.getXSLTFile("F:\\Semester 8\\PRX\\SE1303\\Little_Bakery_Server\\src\\java\\duongll\\xslt\\preparation-baking-a-moment.xsl"),
+                        cakeLinkSource);
+                CakePreparations preparationList = XMLUtils.unmarshal(preparationXML,
+                        "F:\\Semester 8\\PRX\\SE1303\\Little_Bakery_Server\\src\\java\\duongll\\schema\\preparation.xsd",
+                        CakePreparations.class);
+                for (CakePreparation cakepreparation : preparationList.getCakepreparations()) {
+                    cakepreparation.setCakeid(c);
+                    cakePreparationClient.createCakePreparation_XML(cakepreparation, CakePreparation.class);
+                }
+
+                new BufferedWriter(new OutputStreamWriter(new FileOutputStream("test.xml"), "UTF-8")).write(cakeLinkSource);
+
+                String materialXML = XSLTA.applyStylesheet(
+                        MyUtils.getXSLTFile("F:\\Semester 8\\PRX\\SE1303\\Little_Bakery_Server\\src\\java\\duongll\\xslt\\material-baking-a-moment.xsl"),
+                        cakeLinkSource);
+                Materials materialList = XMLUtils.unmarshal(materialXML,
+                        "F:\\Semester 8\\PRX\\SE1303\\Little_Bakery_Server\\src\\java\\duongll\\schema\\material.xsd",
+                        Materials.class);
+                for (Material material : materialList.getMaterials()) {
+                    material.setUnit(ConverterUtils.convertQuantity(material.getUnit()));
+                    if (material.getIngredientid().getName().equals("For the Food")) {
+                        for (Ingredient ingredient : ingredientList.getIngredients()) {
                             material.setIngredientid(ingredient);
                         }
+                    } else {
+                        for (Ingredient ingredient : ingredientList.getIngredients()) {
+                            if (material.getIngredientid().getName().equals(ingredient.getName())) {
+                                material.setIngredientid(ingredient);
+                            }
+                        }
                     }
+                    materialClient.createMaterial_XML(material, Material.class);
                 }
-                materialClient.createMaterial_XML(material, Material.class);
             }
         } catch (Exception e) {
             System.out.println("Something went wrong");

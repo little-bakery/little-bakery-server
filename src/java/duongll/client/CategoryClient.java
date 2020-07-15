@@ -5,9 +5,13 @@
  */
 package duongll.client;
 
+import duongll.dto.Category;
+import java.util.List;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
 
 /**
  * Jersey REST client generated for REST resource:CategoryFacadeREST
@@ -88,9 +92,18 @@ public class CategoryClient {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T findAll_XML(Class<T> responseType) throws ClientErrorException {
+//    public <T> T findAll_XML(Class<T> responseType) throws ClientErrorException {
+//        WebTarget resource = webTarget;
+//        
+//        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+//    }
+    public <T> List<Category> findAll_XML(Class<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+        GenericType<List<Category>> resultList = new GenericType<List<Category>>() {
+        };
+        Response response = webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML_TYPE).get();
+        System.out.println("CODE: " + response.getStatus());
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML_TYPE).get(resultList);
     }
 
     public <T> T findAll_JSON(Class<T> responseType) throws ClientErrorException {
@@ -105,5 +118,5 @@ public class CategoryClient {
     public void close() {
         client.close();
     }
-    
+
 }

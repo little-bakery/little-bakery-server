@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<cakepreparations>
-    <cakepreparation>
-        <id>0</id>
-        <contentprepare>Preheat the oven to 325 degrees F, mist three</contentprepare>
-        <orderprepare>1</orderprepare>
-        <cakeid>0</cakeid>
-    </cakepreparation>
-</cakepreparations>

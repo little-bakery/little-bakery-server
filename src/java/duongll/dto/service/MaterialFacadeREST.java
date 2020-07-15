@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -18,6 +19,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -98,5 +100,23 @@ public class MaterialFacadeREST extends AbstractFacade<Material> {
             System.out.println("Something went wrong");
         }
         return entity;
+    }
+    
+    @GET
+    @Path("findByName")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<Material> getMaterialByName(@QueryParam("name") String name) {
+        Query query = em.createQuery("SELECT m FROM Material m WHERE m.name LIKE :search")
+                .setParameter("search", "%" + name + "%");
+        return query.getResultList();
+    }
+    
+    @GET
+    @Path("/find/{id}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<Material> findMaterialByIngredientId(@PathParam("id") String ingredientId) {
+        Query query = em.createQuery("SELECT m FROM Material m WHERE m.ingredientid.id = :id")
+                .setParameter("id", Long.parseLong(ingredientId));
+        return query.getResultList();
     }
 }

@@ -1,0 +1,11 @@
+CAKE XML: <?xml version="1.0" encoding="UTF-8"?><cake>
+    <id>0</id>
+    <name>German Chocolate Cake</name>
+    <description>German Chocolate Cake: a perfect dessert for your next big occasion! Moist chocolate cake layered with a buttery brown sugar coconut pecan filling.</description>
+    <image/>
+    <categoryid>0</categoryid>
+    <link>https://bakingamoment.com</link>
+    <time>Not yet</time>
+    <serves>10</serves>
+    <views>0</views>
+</cake>

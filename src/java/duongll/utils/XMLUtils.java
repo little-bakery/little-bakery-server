@@ -25,7 +25,10 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public class XMLUtils implements Serializable {
 
@@ -103,4 +106,32 @@ public class XMLUtils implements Serializable {
         }
         return HTMLWellformer.makeWellformed(sourceResult);
     }
+
+    public static boolean validateXMLUsingDtd(ByteArrayInputStream inputStream) throws Exception {
+        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+        domFactory.setValidating(true);
+        DocumentBuilder builder = domFactory.newDocumentBuilder();
+        builder.setErrorHandler(new ErrorHandler() {
+            @Override
+            public void error(SAXParseException exception) throws SAXException {
+                // do something more useful in each of these handlers
+                exception.printStackTrace();
+            }
+
+            @Override
+            public void fatalError(SAXParseException exception) throws SAXException {
+                exception.printStackTrace();
+            }
+
+            @Override
+            public void warning(SAXParseException exception) throws SAXException {
+                exception.printStackTrace();
+            }
+
+        });
+        builder.parse(inputStream);
+        return true;
+    }
+    
+    
 }

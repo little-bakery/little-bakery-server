@@ -6,6 +6,7 @@
 package duongll.utils;
 
 import java.util.Calendar;
+import java.util.Random;
 
 /**
  *
@@ -42,5 +43,9 @@ public class ConverterUtils {
             calendar.add(Calendar.MINUTE, min);
         }
         return calendar.get(Calendar.HOUR) + "H" + calendar.get(Calendar.MINUTE) + "M";
+    }
+    
+    public static Long randomViews() {
+        return Long.parseLong(new Random().nextInt(1000000) + "");
     }
 }
