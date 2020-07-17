@@ -6,13 +6,27 @@
 package duongll.controller;
 
 import duongll.client.AccountClient;
+import duongll.client.AnswerClient;
 import duongll.client.CakeClient;
+import duongll.client.CakeWeightClient;
 import duongll.client.FavoriteClient;
+import duongll.client.IngredientClient;
+import duongll.client.MaterialClient;
+import duongll.client.QuestionClient;
 import duongll.dto.Account;
+import duongll.dto.Answers;
 import duongll.dto.Cake;
+import duongll.dto.CakeWeight;
 import duongll.dto.Favorite;
+import duongll.dto.Ingredient;
+import duongll.dto.Material;
+import duongll.dto.Questions;
+import duongll.utils.ConverterUtils;
+import duongll.utils.XMLUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -38,27 +52,21 @@ public class TestController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        AccountClient accountClient = new AccountClient();
         CakeClient cakeClient = new CakeClient();
         FavoriteClient favoriteClient = new FavoriteClient();
+        Account user = accountClient.checkLogin_XML(Account.class, "leduong", "leduong");
+        Cake cake = cakeClient.findByCakeId_XML(Cake.class, "107");
         try {
-            String username = "leduong";
-            String password = "leduong";
-            AccountClient accountClient = new AccountClient();
-            Account result = accountClient.checkLogin_XML(Account.class, username, password);
-            if (result != null) {
-                System.out.println("result: " + result.getRole());
-            }
-            Cake cake = cakeClient.findByCakeId_XML(Cake.class, "121");
             Favorite favorite = new Favorite();
-            favorite.setId(new Long(0));
+            favorite.setAccount(user);
             favorite.setCakeid(cake);
-            favorite.setAccount(result);
             favorite.setAvailable(true);
-            Favorite f = favoriteClient.addToFavorite_XML(favorite, Favorite.class);
-            if (f == null) {
-                System.out.println("null");
+            Favorite result = favoriteClient.addToFavorite_XML(request, Favorite.class);
+            if (result != null) {
+                System.out.println("sdasdasdasa");
             } else {
-                System.out.println("Not null");
+                System.out.println("aaaaaaaaaaaaaaaaaaa");
             }
         } catch (Exception e) {
             e.printStackTrace();

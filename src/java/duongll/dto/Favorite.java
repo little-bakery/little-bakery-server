@@ -14,6 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -31,6 +33,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Favorite.findAll", query = "SELECT f FROM Favorite f")
     , @NamedQuery(name = "Favorite.findById", query = "SELECT f FROM Favorite f WHERE f.id = :id")})
+@NamedNativeQueries({
+    @NamedNativeQuery(name = "findUserFavoriteCollection", query = "SELECT CAST ((SELECT f.cakeid, c.name, cate.name as category, c.image, c.views "
+            + "FROM Favorite f, Cake c, Category cate "
+            + "WHERE f.username = ? AND f.available = ? "
+            + "AND c.id = f.cakeid AND c.categoryid = cate.id "
+            + "FOR XML PATH('favorite'), Root('favorites')) "
+            + "AS VARCHAR(MAX)) AS XmlData")})
 public class Favorite implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,7 +55,7 @@ public class Favorite implements Serializable {
     @ManyToOne
     private Cake cakeid;
     @Column(name = "available")
-    private Boolean available;
+    private boolean available;
 
     public Favorite() {
     }
@@ -82,20 +91,20 @@ public class Favorite implements Serializable {
         this.cakeid = cakeid;
     }
 
-    @XmlElement
-    public Boolean getAvailable() {
-        return available;
-    }
-
-    public void setAvailable(Boolean available) {
-        this.available = available;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);
         return hash;
+    }
+
+    @XmlElement
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 
     @Override

@@ -5,7 +5,7 @@
  */
 package duongll.dto.service;
 
-import duongll.dto.TEst;
+import duongll.dto.CakeWeight;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -25,27 +25,27 @@ import javax.ws.rs.core.MediaType;
  * @author duong
  */
 @Stateless
-@Path("duongll.dto.test")
-public class TEstFacadeREST extends AbstractFacade<TEst> {
+@Path("duongll.dto.cakeweight")
+public class CakeWeightFacadeREST extends AbstractFacade<CakeWeight> {
 
     @PersistenceContext(unitName = "Little_Bakery_ServerPU")
     private EntityManager em;
 
-    public TEstFacadeREST() {
-        super(TEst.class);
+    public CakeWeightFacadeREST() {
+        super(CakeWeight.class);
     }
 
     @POST
     @Override
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(TEst entity) {
+    public void create(CakeWeight entity) {
         super.create(entity);
     }
 
     @PUT
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("id") Long id, TEst entity) {
+    public void edit(@PathParam("id") Long id, CakeWeight entity) {
         super.edit(entity);
     }
 
@@ -58,21 +58,21 @@ public class TEstFacadeREST extends AbstractFacade<TEst> {
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public TEst find(@PathParam("id") Long id) {
+    public CakeWeight find(@PathParam("id") Long id) {
         return super.find(id);
     }
 
     @GET
     @Override
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<TEst> findAll() {
+    public List<CakeWeight> findAll() {
         return super.findAll();
     }
 
     @GET
     @Path("{from}/{to}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<TEst> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
+    public List<CakeWeight> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }
 
@@ -86,6 +86,18 @@ public class TEstFacadeREST extends AbstractFacade<TEst> {
     @Override
     protected EntityManager getEntityManager() {
         return em;
+    }
+    
+    @POST
+    @Path("create")
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public CakeWeight mappingAnswerWithCake(CakeWeight entity) {
+        try {
+            super.create(entity);
+            return entity;
+        } catch (Exception ignore) {
+            return null;
+        }
     }
     
 }

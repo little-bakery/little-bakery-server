@@ -13,14 +13,14 @@ import java.util.Random;
  * @author duong
  */
 public class ConverterUtils {
-    
+
     public static String convertQuantity(String unit) {
         if (unit.isEmpty() || unit.equals("")) {
             return "";
         }
         return unit.replaceAll("Â", "");
     }
-    
+
     public static String convertTime(String prepareTime, String cookTime) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR, 0);
@@ -44,8 +44,34 @@ public class ConverterUtils {
         }
         return calendar.get(Calendar.HOUR) + "H" + calendar.get(Calendar.MINUTE) + "M";
     }
-    
+
     public static Long randomViews() {
         return Long.parseLong(new Random().nextInt(1000000) + "");
+    }
+
+    public static int convertTimeToMinute(String times) {
+        int indexOfHour, hour, indexOfMinute, min = 0, indexOfDay, day;
+        if (times.contains("D")) {
+            indexOfDay = times.indexOf("D");
+            day = Integer.parseInt(times.substring(0, indexOfDay));
+            min += day * 1440;
+            indexOfHour = times.indexOf("H");
+            hour = Integer.parseInt(times.substring((indexOfDay + 1), indexOfHour));
+            indexOfMinute = times.indexOf("M");
+            min += Integer.parseInt(times.substring((indexOfHour + 1), indexOfMinute));
+            min += (hour * 60);
+        } else {
+            if (times.contains("H")) {
+                indexOfHour = times.indexOf("H");
+                hour = Integer.parseInt(times.substring(0, indexOfHour));
+                indexOfMinute = times.indexOf("M");
+                min = Integer.parseInt(times.substring((indexOfHour + 1), indexOfMinute));
+                min += (hour * 60);
+            } else {
+                indexOfMinute = times.indexOf("M");
+                min = Integer.parseInt(times.substring(0, indexOfMinute));
+            }
+        }
+        return min;
     }
 }

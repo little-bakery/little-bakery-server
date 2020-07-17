@@ -22,6 +22,7 @@ import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
@@ -65,6 +66,8 @@ public class XMLUtils implements Serializable {
                 validator.validate(new SAXSource(new InputSource(new StringReader(source))));
             }
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            XMLInputFactory xMLInputFactory = XMLInputFactory.newInstance();
+            unmarshaller.setProperty(xMLInputFactory.IS_COALESCING, true);
             return (T) unmarshaller.unmarshal(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception ex) {
             ex.printStackTrace();

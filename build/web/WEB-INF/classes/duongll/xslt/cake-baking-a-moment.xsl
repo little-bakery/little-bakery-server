@@ -23,13 +23,18 @@
             <description>
                 <xsl:value-of select="//div[@class='post-content']/h2/text()"/>
             </description>
-            <image>
-                <xsl:value-of select="//*[@id='wprm-recipe-container-83462']/div/div[1]/div[2]/img"/>
-            </image>
+            <image>https://bakingamoment.com/wp-content/uploads/2019/01/IMG_2714-best-german-chocolate-cake-recipe-720x720.jpg</image>
             <categoryid>0</categoryid>
             <link>https://bakingamoment.com</link>
             <time>Not yet</time>
-            <serves>10</serves>
+            <xsl:choose>
+                <xsl:when test="//*[@id='wprm-tooltip-1594870014252']">
+                    <xsl:value-of select="//*[@id='wprm-tooltip-1594870014252']/text()"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <serves>10</serves>
+                </xsl:otherwise>
+            </xsl:choose>
             <views>0</views>
         </cake>
     </xsl:template>

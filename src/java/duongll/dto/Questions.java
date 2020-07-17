@@ -6,19 +6,19 @@
 package duongll.dto;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -31,14 +31,12 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Questions.findAll", query = "SELECT q FROM Questions q")
     , @NamedQuery(name = "Questions.findById", query = "SELECT q FROM Questions q WHERE q.id = :id")
     , @NamedQuery(name = "Questions.findByName", query = "SELECT q FROM Questions q WHERE q.name = :name")
-    , @NamedQuery(name = "Questions.findByTag", query = "SELECT q FROM Questions q WHERE q.tag = :tag")
-    , @NamedQuery(name = "Questions.findByKeyword", query = "SELECT q FROM Questions q WHERE q.keyword = :keyword")})
+    , @NamedQuery(name = "Questions.findByTag", query = "SELECT q FROM Questions q WHERE q.tag = :tag")})
 public class Questions implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @Size(max = 1073741823)
@@ -47,9 +45,8 @@ public class Questions implements Serializable {
     @Size(max = 50)
     @Column(name = "tag")
     private String tag;
-    @Size(max = 100)
-    @Column(name = "keyword")
-    private String keyword;
+    @OneToMany(mappedBy = "questionid")
+    private Collection<Answers> answersCollection;
 
     public Questions() {
     }
@@ -58,7 +55,6 @@ public class Questions implements Serializable {
         this.id = id;
     }
 
-    @XmlElement
     public Long getId() {
         return id;
     }
@@ -67,7 +63,6 @@ public class Questions implements Serializable {
         this.id = id;
     }
 
-    @XmlElement
     public String getName() {
         return name;
     }
@@ -76,7 +71,6 @@ public class Questions implements Serializable {
         this.name = name;
     }
 
-    @XmlElement
     public String getTag() {
         return tag;
     }
@@ -85,13 +79,13 @@ public class Questions implements Serializable {
         this.tag = tag;
     }
 
-    @XmlElement
-    public String getKeyword() {
-        return keyword;
+    @XmlTransient
+    public Collection<Answers> getAnswersCollection() {
+        return answersCollection;
     }
 
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
+    public void setAnswersCollection(Collection<Answers> answersCollection) {
+        this.answersCollection = answersCollection;
     }
 
     @Override
@@ -118,5 +112,5 @@ public class Questions implements Serializable {
     public String toString() {
         return "duongll.dto.Questions[ id=" + id + " ]";
     }
-
+    
 }

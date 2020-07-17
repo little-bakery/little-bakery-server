@@ -19,7 +19,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -33,7 +32,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Answers.findAll", query = "SELECT a FROM Answers a")
     , @NamedQuery(name = "Answers.findById", query = "SELECT a FROM Answers a WHERE a.id = :id")
-    , @NamedQuery(name = "Answers.findByName", query = "SELECT a FROM Answers a WHERE a.name = :name")})
+    , @NamedQuery(name = "Answers.findByName", query = "SELECT a FROM Answers a WHERE a.name = :name")
+    , @NamedQuery(name = "Answers.findByPoint", query = "SELECT a FROM Answers a WHERE a.point = :point")})
 public class Answers implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,6 +50,8 @@ public class Answers implements Serializable {
     @JoinColumn(name = "questionid", referencedColumnName = "id")
     @ManyToOne
     private Questions questionid;
+    @OneToMany(mappedBy = "answerid")
+    private Collection<CakeWeight> cakeWeightCollection;
 
     public Answers() {
     }
@@ -58,7 +60,6 @@ public class Answers implements Serializable {
         this.id = id;
     }
 
-    @XmlElement
     public Long getId() {
         return id;
     }
@@ -67,7 +68,6 @@ public class Answers implements Serializable {
         this.id = id;
     }
 
-    @XmlElement
     public String getName() {
         return name;
     }
@@ -76,7 +76,6 @@ public class Answers implements Serializable {
         this.name = name;
     }
 
-    @XmlElement
     public Integer getPoint() {
         return point;
     }
@@ -85,7 +84,6 @@ public class Answers implements Serializable {
         this.point = point;
     }
 
-    @XmlElement
     public Questions getQuestionid() {
         return questionid;
     }
@@ -93,7 +91,16 @@ public class Answers implements Serializable {
     public void setQuestionid(Questions questionid) {
         this.questionid = questionid;
     }
-    
+
+    @XmlTransient
+    public Collection<CakeWeight> getCakeWeightCollection() {
+        return cakeWeightCollection;
+    }
+
+    public void setCakeWeightCollection(Collection<CakeWeight> cakeWeightCollection) {
+        this.cakeWeightCollection = cakeWeightCollection;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -118,5 +125,5 @@ public class Answers implements Serializable {
     public String toString() {
         return "duongll.dto.Answers[ id=" + id + " ]";
     }
-
+    
 }

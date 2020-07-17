@@ -11,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -98,8 +99,10 @@ public class FavoriteFacadeREST extends AbstractFacade<Favorite> {
             Query query = em.createQuery("SELECT f FROM Favorite f WHERE f.account.username = :username AND f.cakeid.id = :id")
                     .setParameter("username", username)
                     .setParameter("id", Long.parseLong(cakeid));
-            return (Favorite) query.getSingleResult();
+            Favorite f = (Favorite) query.getSingleResult();
+            return f;
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -108,8 +111,13 @@ public class FavoriteFacadeREST extends AbstractFacade<Favorite> {
     @Path("add")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Favorite addToFavorite(Favorite favorite) {
-        super.create(favorite);
-        return favorite;
+        try {
+            super.create(favorite);
+            return favorite;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @PUT
@@ -123,26 +131,14 @@ public class FavoriteFacadeREST extends AbstractFacade<Favorite> {
     @GET
     @Path("/getAll/{username}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<Favorite> getUserFavoriteCollection(@PathParam("username") String user, @QueryParam("available") Boolean available) {
-        Query query = em.createQuery("SELECT f FROM Favorite f WHERE f.account.username = :username AND f.available = :available")
-                .setParameter("username", user)
-                .setParameter("available", available);
-        return query.getResultList();
-    }
-
-    @GET
-    @Path("/getAll")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public String getUserFavoriteCollectionXML(@PathParam("username") String user, @QueryParam("available") Boolean available) {
         try {
-            Query query = em.createQuery("SELECT CAST ((SELECT f.cakeid, f.id FROM Favorite f "
-                    + "WHERE f.account.username = :username AND f.available = :avalable"
-                    + "FOR XML PATH('favorite'), Root('favorites'))"
-                    + "AS NVARCHAR(MAX)) AS XmlData")
-                    .setParameter("username", user)
-                    .setParameter("available", available);
-            return (String) query.getSingleResult();
+            TypedQuery query = em.createNamedQuery("findUserFavoriteCollection", String.class)
+                    .setParameter(1, user)
+                    .setParameter(2, available);
+            return query.getResultList().toString();
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

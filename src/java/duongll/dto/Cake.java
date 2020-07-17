@@ -6,6 +6,7 @@
 package duongll.dto;
 
 import java.io.Serializable;
+import java.lang.annotation.Native;
 import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -15,6 +16,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -41,6 +44,13 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Cake.findByTime", query = "SELECT c FROM Cake c WHERE c.time = :time")
     , @NamedQuery(name = "Cake.findByServes", query = "SELECT c FROM Cake c WHERE c.serves = :serves")
     , @NamedQuery(name = "Cake.findByCategoryID", query = "SELECT c FROM Cake c WHERE c.categoryid.id = :id")
+})
+@NamedNativeQueries({
+    @NamedNativeQuery(name = "findResultForUser", query = "SELECT sum(a.point) as point, c.id as cakeid FROM CakeWeight cw "
+            + "join Answers a on cw.answerid = a.id "
+            + "join Cake c on c.id = cw.cakeid "
+            + "WHERE a.id in (?) "
+            + "group by cw.answerid, c.id ORDER BY point DESC")
 })
 public class Cake implements Serializable {
 
@@ -78,6 +88,8 @@ public class Cake implements Serializable {
     private Category categoryid;
     @OneToMany(mappedBy = "cakeid")
     private Collection<Favorite> favoriteColelction;
+    @OneToMany(mappedBy = "cakeid")
+    private Collection<CakeWeight> cakeWeightCollection;
 
     public Cake() {
     }
@@ -192,6 +204,15 @@ public class Cake implements Serializable {
 
     public void setFavoriteColelction(Collection<Favorite> favoriteColelction) {
         this.favoriteColelction = favoriteColelction;
+    }
+
+    @XmlTransient
+    public Collection<CakeWeight> getCakeWeightCollection() {
+        return cakeWeightCollection;
+    }
+
+    public void setCakeWeightCollection(Collection<CakeWeight> cakeWeightCollection) {
+        this.cakeWeightCollection = cakeWeightCollection;
     }
 
     @Override

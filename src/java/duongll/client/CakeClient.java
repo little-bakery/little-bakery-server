@@ -6,12 +6,12 @@
 package duongll.client;
 
 import duongll.dto.Cake;
+import duongll.dto.CakeResult;
 import java.util.List;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Response;
 
 /**
  * Jersey REST client generated for REST resource:CakeFacadeREST
@@ -38,17 +38,7 @@ public class CakeClient {
     }
 
     public <T> T createCake_XML(Object requestEntity, Class<T> responseType) throws ClientErrorException {
-        return webTarget.
-                path("cake").
-                request(javax.ws.rs.core.MediaType.APPLICATION_XML).
-                post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML), responseType);
-    }
-
-    public <T> T createPosition_XML(Object requestEntity, Class<T> responseType) throws ClientErrorException {
-        webTarget.path("position");
-        return webTarget.
-                request(javax.ws.rs.core.MediaType.APPLICATION_XML).
-                post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML), responseType);
+        return webTarget.path("cake").request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML), responseType);
     }
 
     public <T> T createCake_JSON(Object requestEntity, Class<T> responseType) throws ClientErrorException {
@@ -101,10 +91,12 @@ public class CakeClient {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON));
     }
 
-//    public <T> T findAll_XML(Class<T> responseType) throws ClientErrorException {
-//        WebTarget resource = webTarget;
-//        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
-//    }
+    public <T> List<Cake> findAll_XML(Class<T> responseType) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(new GenericType<List<Cake>>() {
+        });
+    }
+
     public <T> T findAll_JSON(Class<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
@@ -114,24 +106,16 @@ public class CakeClient {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
     }
 
-    public void close() {
-        client.close();
+    public <T> T findByCategoryId_XML(Class<T> responseType, String id) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("find/{0}", new Object[]{id}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> List<Cake> findAll_XML(Class<T> responseType) throws ClientErrorException {
-//        WebTarget resource = webTarget;
-        try {
-            GenericType<List<Cake>> resultList = new GenericType<List<Cake>>() {
-            };
-            Response response = webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML_TYPE)
-                    .header("Keep-Alive", "300")
-                    .get();
-            System.out.println("Status code: " + response.getStatus());
-            return response.readEntity(resultList);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public <T> T findByCategoryId_JSON(Class<T> responseType, String id) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("find/{0}", new Object[]{id}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
 
     public <T> T findByCakeId_XML(Class<T> responseType, String id) throws ClientErrorException {
@@ -143,6 +127,29 @@ public class CakeClient {
     public <T> T findByCakeId_JSON(Class<T> responseType, String id) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("{0}/find", new Object[]{id}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
+    }
+
+    public void close() {
+        client.close();
+    }
+
+    public <T> List<CakeResult> findResultForUser_XML(Class<T> responseType, String answerid) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        if (answerid != null) {
+            resource = resource.queryParam("answerid", answerid);
+        }
+        resource = resource.path("findResult");
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(new GenericType<List<CakeResult>>() {
+        });
+    }
+
+    public <T> T findResultForUser_JSON(Class<T> responseType, String answerid) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        if (answerid != null) {
+            resource = resource.queryParam("answerid", answerid);
+        }
+        resource = resource.path("findResult");
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
 }

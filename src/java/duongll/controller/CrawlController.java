@@ -36,6 +36,8 @@ public class CrawlController extends HttpServlet {
             CrawlHelper.crawlDataBakingAMoment();
             CrawlHelper.crawlDataBakingMad();
             System.out.println("DONE CRAWLER");
+            CrawlHelper.mappingCakeWithAnswer();
+            System.out.println("DONE MAPPING");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -6,7 +6,10 @@
 package duongll.dto.service;
 
 import duongll.dto.Cake;
+import duongll.dto.CakeResult;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -20,6 +23,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
@@ -125,5 +129,26 @@ public class CakeFacadeREST extends AbstractFacade<Cake> {
         Query query = em.createQuery("SELECT c FROM Cake c Where c.id = :id")
                 .setParameter("id", Long.parseLong(cakeId));
         return (Cake) query.getSingleResult();
+    }
+    
+    @GET
+    @Path("findResult")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<CakeResult> findResultForUser(@QueryParam("answerid") List<String> answerId) {        
+        String param = answerId.stream().collect(Collectors.joining(","));
+        List<Object[]> result = em.createNativeQuery("SELECT TOP 50 sum(a.point) as point, c.id as cakeid FROM CakeWeight cw "
+            + "join Answers a on cw.answerid = a.id "
+            + "join Cake c on c.id = cw.cakeid "
+            + "WHERE a.id in (" + param + ")"
+            + "group by cw.answerid, c.id ORDER BY point DESC").getResultList();
+        List<CakeResult> cakeResultList = new ArrayList<>();
+        for (Object[] object : result) {
+            CakeResult cakeResult = new CakeResult();
+            Cake cake = em.find(Cake.class, object[1]);
+            cakeResult.setCake(cake);
+            cakeResult.setPoint(Integer.parseInt(object[0] + ""));
+            cakeResultList.add(cakeResult);
+        }
+        return cakeResultList;
     }
 }
