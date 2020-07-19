@@ -45,13 +45,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Cake.findByServes", query = "SELECT c FROM Cake c WHERE c.serves = :serves")
     , @NamedQuery(name = "Cake.findByCategoryID", query = "SELECT c FROM Cake c WHERE c.categoryid.id = :id")
 })
-@NamedNativeQueries({
-    @NamedNativeQuery(name = "findResultForUser", query = "SELECT sum(a.point) as point, c.id as cakeid FROM CakeWeight cw "
-            + "join Answers a on cw.answerid = a.id "
-            + "join Cake c on c.id = cw.cakeid "
-            + "WHERE a.id in (?) "
-            + "group by cw.answerid, c.id ORDER BY point DESC")
-})
 public class Cake implements Serializable {
 
     private static final long serialVersionUID = 1L;

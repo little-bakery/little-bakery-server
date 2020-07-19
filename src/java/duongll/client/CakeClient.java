@@ -6,7 +6,6 @@
 package duongll.client;
 
 import duongll.dto.Cake;
-import duongll.dto.CakeResult;
 import java.util.List;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
@@ -150,6 +149,18 @@ public class CakeClient {
             resource = resource.queryParam("answerid", answerid);
         }
         resource = resource.path("findResult");
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
+    }
+
+    public <T> T calculatePageRender_XML(Class<T> responseType) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path("find/page");
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public <T> T calculatePageRender_JSON(Class<T> responseType) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path("find/page");
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
 }

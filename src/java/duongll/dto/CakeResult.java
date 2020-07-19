@@ -35,5 +35,4 @@ public class CakeResult {
     public void setPoint(Integer point) {
         this.point = point;
     }
-
 }
