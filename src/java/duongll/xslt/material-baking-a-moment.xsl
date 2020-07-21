@@ -28,7 +28,7 @@
                                     //div[@class='post-content']                     
                                     //div[@class='wprm-recipe-container']                     
                                     //div[@class='wprm-recipe wprm-recipe-tastefully-simple']                     
-                                    /div[@class='wprm-recipe-ingredients-container']/div[@class='wprm-recipe-ingredient-group'][1]/ul/li">
+                                    /div[@class='wprm-recipe-ingredients-container']/div[@class='wprm-recipe-ingredient-group'][$count]/ul/li">
                     <material>
                         <id>0</id>
                         <name>

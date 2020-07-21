@@ -13,13 +13,13 @@ and open the template in the editor.
 
 <!-- TODO define your own vocabulary/syntax. Example follows:  -->
 <!ELEMENT cake (id, name, description, image, categoryid, link, time, serves, views)>
-<!ELEMENT id ANY>
-<!ELEMENT name ANY>
-<!ELEMENT description ANY>
-<!ELEMENT image ANY>
-<!ELEMENT categoryid ANY>
-<!ELEMENT link ANY>
-<!ELEMENT time ANY>
-<!ELEMENT serves ANY>
-<!ELEMENT views ANY>
+<!ELEMENT id (#PCDATA)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT image (#PCDATA)>
+<!ELEMENT categoryid (#PCDATA)>
+<!ELEMENT link (#PCDATA)>
+<!ELEMENT time (#PCDATA)>
+<!ELEMENT serves (#PCDATA)>
+<!ELEMENT views (#PCDATA)>
 

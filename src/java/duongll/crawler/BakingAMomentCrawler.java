@@ -111,12 +111,15 @@ public class BakingAMomentCrawler {
 
                 String materialXML = XSLTA.applyStylesheet(
                         MyUtils.getXSLTFile("F:\\Semester 8\\PRX\\Little_Bakery_Server\\src\\java\\duongll\\xslt\\material-baking-a-moment.xsl"),
-                        cakeLinkSource);
+                        cakeLinkSource);                
                 Materials materialList = XMLUtils.unmarshal(materialXML,
                         "F:\\Semester 8\\PRX\\Little_Bakery_Server\\src\\java\\duongll\\schema\\material.xsd",
                         Materials.class);
-                for (Material material : materialList.getMaterials()) {
+                for (Material material : materialList.getMaterials()) {                    
                     material.setUnit(ConverterUtils.convertQuantity(material.getUnit()));
+                    System.out.println("Material: " + material.getName());
+                    System.out.println("Quantity: " + material.getUnit());
+                    System.out.println("Ingredient NAme: " + material.getName());
                     if (material.getIngredientid().getName().equals("For the Food")) {
                         for (Ingredient ingredient : ingredientList.getIngredients()) {
                             material.setIngredientid(ingredient);
